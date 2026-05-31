@@ -163,6 +163,16 @@ This is a public-data web simulator. It should not:
 
 All outputs are simulated estimates based on public/community data.
 
+## Development
+
+```bash
+npm install
+npm run typecheck
+npm test
+npm run build
+npm run dev
+```
+
 ## Development status
 
-Bootstrap/planning stage. No app implementation yet.
+Initial Vite/React/TypeScript app scaffold is implemented with a deterministic weighted simulator, unit tests, demo-only fixture data, location picker, ticket presets, seed input, source metadata, and result summary. The included fixture is hand-authored demo data and **not real ChronoStory rates**; real ChronoDEX/official public sheet import remains the next milestone.

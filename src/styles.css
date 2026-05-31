@@ -1,0 +1,71 @@
+:root {
+  color: #f7f3e8;
+  background: #141019;
+  color-scheme: dark;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+* { box-sizing: border-box; }
+
+body { margin: 0; min-width: 320px; min-height: 100vh; }
+
+a { color: #ffd166; }
+
+button, input, select { font: inherit; }
+
+button { border: 0; border-radius: 999px; cursor: pointer; font-weight: 700; padding: 0.7rem 1rem; }
+
+button.primary { background: linear-gradient(135deg, #ffb703, #fb8500); color: #1a1200; box-shadow: 0 10px 30px rgb(251 133 0 / 24%); width: 100%; }
+
+button.secondary { background: #2d2636; color: #f7f3e8; border: 1px solid #4b4058; }
+
+input, select { background: #211b29; border: 1px solid #4b4058; border-radius: 0.8rem; color: #fff; padding: 0.75rem 0.9rem; width: 100%; }
+
+.app-shell { max-width: 1120px; margin: 0 auto; padding: 2rem; }
+
+.hero { background: radial-gradient(circle at top left, rgb(255 183 3 / 24%), transparent 35%), #1d1724; border: 1px solid #332a3f; border-radius: 1.5rem; margin-bottom: 1.5rem; padding: 2rem; }
+
+.hero h1 { font-size: clamp(2.25rem, 8vw, 5rem); line-height: 0.9; margin: 0.25rem 0 1rem; }
+
+.hero p { color: #d8cfe3; max-width: 780px; }
+
+.eyebrow { color: #ffd166 !important; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; }
+
+.grid { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); margin-bottom: 1rem; }
+
+.panel { background: #1d1724; border: 1px solid #332a3f; border-radius: 1.25rem; padding: 1.25rem; }
+
+.panel h2 { margin-top: 0; }
+
+.field { display: grid; gap: 0.4rem; margin-bottom: 1rem; }
+
+.field span { color: #d8cfe3; font-weight: 700; }
+
+.preset-row { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1rem; }
+
+.source-card { background: #15111a; border: 1px dashed #5c506a; border-radius: 1rem; display: grid; gap: 0.35rem; margin-top: 1rem; padding: 1rem; }
+
+.muted { color: #bdb0ca; }
+
+.error { background: #4a111b; border: 1px solid #ff6b6b; border-radius: 1rem; padding: 1rem; }
+
+.rare-strip { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1rem; }
+
+.pill, .rarity { border-radius: 999px; display: inline-block; font-size: 0.85rem; font-weight: 800; padding: 0.25rem 0.6rem; text-transform: capitalize; }
+
+.common { background: #334155; color: #e2e8f0; }
+.uncommon { background: #14532d; color: #bbf7d0; }
+.rare { background: #1d4ed8; color: #dbeafe; }
+.epic { background: #6d28d9; color: #ede9fe; }
+.legendary { background: #92400e; color: #fef3c7; }
+
+table { border-collapse: collapse; width: 100%; }
+
+th, td { border-bottom: 1px solid #332a3f; padding: 0.8rem; text-align: left; }
+
+th { color: #ffd166; font-size: 0.85rem; text-transform: uppercase; }
+
+@media (max-width: 720px) {
+  .app-shell { padding: 1rem; }
+  table { display: block; overflow-x: auto; }
+}
