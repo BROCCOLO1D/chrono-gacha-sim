@@ -5,11 +5,24 @@ const PROBABILITY_TOLERANCE = 0.000001;
 
 type NormalizedRate = Required<Pick<GachaRate, 'locationId' | 'itemId' | 'sourceUrl' | 'fetchedAt'>> & {
   probability: number;
+  weight?: number;
+  sourcePercent?: string;
+  oneIn?: number;
 };
 
 function assertPositiveFinite(value: number | undefined, label: string): asserts value is number {
   if (typeof value !== 'number' || !Number.isFinite(value) || value <= 0) {
     throw new Error(`${label} must be a positive finite number.`);
+  }
+}
+
+function validateUniqueRates(rates: GachaRate[], locationId: string) {
+  const seen = new Set<string>();
+  for (const rate of rates) {
+    if (seen.has(rate.itemId)) {
+      throw new Error(`Location "${locationId}" has duplicate rate row for item "${rate.itemId}".`);
+    }
+    seen.add(rate.itemId);
   }
 }
 
@@ -19,6 +32,8 @@ export function normalizeRates(rates: GachaRate[], locationId: string): Normaliz
   if (locationRates.length === 0) {
     throw new Error(`No gacha rates found for location "${locationId}".`);
   }
+
+  validateUniqueRates(locationRates, locationId);
 
   const probabilityRates = locationRates.filter((rate) => rate.probability !== undefined);
   const weightRates = locationRates.filter((rate) => rate.weight !== undefined);
@@ -43,6 +58,8 @@ export function normalizeRates(rates: GachaRate[], locationId: string): Normaliz
       probability: rate.probability as number,
       sourceUrl: rate.sourceUrl,
       fetchedAt: rate.fetchedAt,
+      sourcePercent: rate.sourcePercent,
+      oneIn: rate.oneIn ?? 1 / (rate.probability as number),
     }));
   }
 
@@ -55,13 +72,19 @@ export function normalizeRates(rates: GachaRate[], locationId: string): Normaliz
     throw new Error(`Location "${locationId}" must provide a complete positive weight table.`);
   }
 
-  return weightRates.map((rate) => ({
-    locationId: rate.locationId,
-    itemId: rate.itemId,
-    probability: (rate.weight as number) / totalWeight,
-    sourceUrl: rate.sourceUrl,
-    fetchedAt: rate.fetchedAt,
-  }));
+  return weightRates.map((rate) => {
+    const probability = (rate.weight as number) / totalWeight;
+    return {
+      locationId: rate.locationId,
+      itemId: rate.itemId,
+      probability,
+      weight: rate.weight,
+      sourceUrl: rate.sourceUrl,
+      fetchedAt: rate.fetchedAt,
+      sourcePercent: rate.sourcePercent,
+      oneIn: rate.oneIn ?? 1 / probability,
+    };
+  });
 }
 
 export function rollOne(normalizedRates: NormalizedRate[], random: () => number): NormalizedRate {
@@ -124,7 +147,28 @@ export function summarizePulls(dataset: GachaDataset, locationId: string, pulls:
         category: item.category,
         probability: rate.probability,
         sourceUrl: rate.sourceUrl,
+        sourcePercent: rate.sourcePercent,
+        oneIn: rate.oneIn,
+        expectedCount: rate.probability * pulls.length,
       };
     })
     .sort((a, b) => b.count - a.count || a.item.name.localeCompare(b.item.name));
+}
+
+export function getLocationStats(dataset: GachaDataset, locationId: string) {
+  const rates = normalizeRates(dataset.rates, locationId);
+  const firstRate = rates[0] as NormalizedRate | undefined;
+  if (!firstRate) {
+    throw new Error(`No normalized rates found for location "${locationId}".`);
+  }
+
+  const rarest = rates.reduce<NormalizedRate>((min, rate) => (rate.probability < min.probability ? rate : min), firstRate);
+  const mostCommon = rates.reduce<NormalizedRate>((max, rate) => (rate.probability > max.probability ? rate : max), firstRate);
+
+  return {
+    itemCount: rates.length,
+    totalProbability: rates.reduce((sum, rate) => sum + rate.probability, 0),
+    rarest,
+    mostCommon,
+  };
 }

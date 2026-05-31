@@ -1,6 +1,6 @@
 export type Rarity = 'common' | 'uncommon' | 'rare' | 'epic' | 'legendary';
 
-type Category = 'Equip' | 'Use' | 'Etc' | 'Scroll';
+export type Category = 'Equip' | 'Use' | 'Setup' | 'Etc' | 'Cash' | 'Scroll' | 'Unknown';
 
 export type GachaItem = {
   id: string;
@@ -21,12 +21,17 @@ export type GachaRate = {
   notes?: string;
   sourceUrl: string;
   fetchedAt: string;
+  sourcePercent?: string;
+  oneIn?: number;
 };
 
 export type GachaLocation = {
   id: string;
   name: string;
   sourceUrl: string;
+  sheetName?: string;
+  itemCount?: number;
+  totalWeight?: number;
 };
 
 export type GachaDataset = {
@@ -54,4 +59,7 @@ export type ResultSummaryRow = {
   category?: string;
   probability: number;
   sourceUrl: string;
+  sourcePercent?: string;
+  oneIn?: number;
+  expectedCount: number;
 };

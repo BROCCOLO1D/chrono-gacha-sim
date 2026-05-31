@@ -8,15 +8,21 @@ type LocationPickerProps = {
 
 export function LocationPicker({ locations, selectedLocationId, onChange }: LocationPickerProps) {
   return (
-    <label className="field">
-      <span>Gacha location</span>
-      <select value={selectedLocationId} onChange={(event) => onChange(event.target.value)}>
+    <div className="town-picker" aria-label="Gachapon town selector">
+      <span className="field-label">Gacha town</span>
+      <div className="town-buttons">
         {locations.map((location) => (
-          <option key={location.id} value={location.id}>
-            {location.name}
-          </option>
+          <button
+            key={location.id}
+            className={location.id === selectedLocationId ? 'town-button active' : 'town-button'}
+            type="button"
+            onClick={() => onChange(location.id)}
+          >
+            <strong>{location.name}</strong>
+            <span>{location.itemCount?.toLocaleString() ?? '—'} items</span>
+          </button>
         ))}
-      </select>
-    </label>
+      </div>
+    </div>
   );
 }

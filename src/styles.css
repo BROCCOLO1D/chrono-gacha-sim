@@ -341,3 +341,81 @@ th { color: #714014; font-size: 0.78rem; text-transform: uppercase; }
   .inventory-frame { grid-template-columns: 1fr; }
   table { display: block; overflow-x: auto; }
 }
+
+.town-picker {
+  display: grid;
+  gap: 0.7rem;
+}
+
+.field-label {
+  color: #5a3218;
+  font-size: 0.78rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.town-buttons {
+  display: grid;
+  gap: 0.55rem;
+  grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr));
+}
+
+.town-button {
+  background: linear-gradient(180deg, #fff2bf 0%, #d68b36 100%);
+  border: 2px solid #714016;
+  border-radius: 12px;
+  box-shadow: inset 0 2px 0 rgb(255 255 255 / 65%), 0 3px 0 #6a3a13;
+  color: #3b210f;
+  cursor: pointer;
+  display: grid;
+  gap: 0.15rem;
+  padding: 0.65rem 0.8rem;
+  text-align: left;
+}
+
+.town-button strong {
+  font-size: 0.95rem;
+}
+
+.town-button span {
+  color: #75431e;
+  font-size: 0.75rem;
+  font-weight: 800;
+}
+
+.town-button.active,
+.town-button:hover {
+  background: linear-gradient(180deg, #fff8d7 0%, #ffbd4f 100%);
+  outline: 3px solid rgb(255 231 115 / 70%);
+  transform: translateY(-1px);
+}
+
+.town-card {
+  background: #fff4c6;
+  border: 2px solid #8b5825;
+  border-radius: 12px;
+  color: #4c2c14;
+  display: grid;
+  gap: 0.25rem;
+  margin-top: 1rem;
+  padding: 0.85rem;
+}
+
+.town-card a,
+.source-card a,
+.inventory-card__rates a {
+  color: #254f9f;
+  font-weight: 900;
+}
+
+.sim-note {
+  background: #fff1bd;
+  border: 2px solid #9a672f;
+  border-radius: 12px;
+  color: #5b351b;
+  font-size: 0.9rem;
+  font-weight: 700;
+  margin: 1rem 1rem 0;
+  padding: 0.8rem 1rem;
+}

@@ -27,6 +27,7 @@ Data ingestion rules:
 - Store source URL and fetch timestamp for every imported dataset.
 - Keep normalized data checked or cached in a transparent format when legally/reasonably allowed.
 - Clearly label if a result is simulated from public rates vs. manually-entered/demo data.
+- Current app data is generated from the ChronoDEX-linked official public gachapon sheet: 7 towns, 1,177 item rows.
 - Do not scrape private Discord content or any authenticated ChronoStory/Nexon APIs.
 
 ## Planned tech stack
@@ -89,21 +90,20 @@ type SimulatedPull = {
 ### v0.1 — minimal useful simulator
 
 - Static React app shell.
-- Gacha location selector.
+- Official-sheet gacha town selector covering Lith Harbor, Henesys, Ellinia, Perion, Kerning City, Nautilus, and Omega Sector.
 - Ticket-count input with presets: 1, 10, 35, 50, 100.
 - Deterministic simulation engine accepting weighted/probability tables.
 - Result summary:
   - item counts
   - rare hits
   - duplicate counts
-  - estimated rate per result where known
-- Demo/sample data fixture so the app works before live data ingestion is complete.
-- Unit tests for weighted-roll correctness and deterministic seeded runs.
+  - official-sheet source rate, one-in odds, and expected count for each sampled result
+- Unit tests for official-sheet import shape, weighted-roll correctness, and deterministic seeded runs.
 
-### v0.2 — real ChronoStory data
+### v0.2 — richer ChronoStory data
 
-- Fetch/import script for public ChronoDEX/official gachapon resources.
-- Normalize locations, items, and rates into JSON.
+- Refresh/import script for the public ChronoDEX official gachapon sheet.
+- Normalize locations, items, and rates into generated TypeScript data.
 - Source metadata and fetch timestamp shown in UI.
 - Search/filter results by item name/category/rarity.
 - Link result items back to ChronoDEX when possible.
@@ -119,7 +119,7 @@ type SimulatedPull = {
 
 ### Frontend assets
 
-Use Maple-style item/inventory/result UI, not generic SaaS cards. Current demo item icons are served from public MapleStory.IO GMS v83 item icon endpoints, e.g. `https://maplestory.io/api/GMS/83/item/<itemId>/icon`, so the simulator can render recognizable Maple item sprites while real ChronoStory data import is pending. Record each asset source/item id when importing real data.
+Use Maple-style item/inventory/result UI, not generic SaaS cards. Item icons are served from public MapleStory.IO GMS v83 item icon endpoints using the imported official-sheet item IDs, e.g. `https://maplestory.io/api/GMS/83/item/<itemId>/icon`.
 
 Only use assets from official/publicly accessible sources where usage is acceptable. Keep text/fallback UI for missing/questionable assets, and do not bundle scraped private/authenticated assets.
 
@@ -177,6 +177,7 @@ Every push to `main` runs typecheck, tests, and a production Vite build before d
 
 ```bash
 npm install
+npm run data:gacha
 npm run typecheck
 npm test
 npm run build
