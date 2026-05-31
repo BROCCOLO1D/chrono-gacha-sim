@@ -1,4 +1,5 @@
-const ticketPresets = [1, 10, 35, 50, 100];
+const ticketPresets = [1, 10, 35, 50, 100, 1000, 10000];
+const maxTicketCount = 100000;
 
 type RollControlsProps = {
   ticketCount: number;
@@ -7,6 +8,10 @@ type RollControlsProps = {
 };
 
 export function RollControls({ ticketCount, onTicketCountChange, onRoll }: RollControlsProps) {
+  function addTickets(amount: number) {
+    onTicketCountChange(Math.min(maxTicketCount, ticketCount + amount));
+  }
+
   return (
     <section className="maple-window controls" aria-labelledby="roll-controls-heading">
       <div className="maple-titlebar">
@@ -18,16 +23,16 @@ export function RollControls({ ticketCount, onTicketCountChange, onRoll }: RollC
           <span>Ticket count</span>
           <input
             min={1}
-            max={100000}
+            max={maxTicketCount}
             type="number"
             value={ticketCount}
             onChange={(event) => onTicketCountChange(Number(event.target.value))}
           />
         </label>
-        <div className="preset-row" aria-label="Ticket presets">
+        <div className="preset-row" aria-label="Add tickets">
           {ticketPresets.map((preset) => (
-            <button key={preset} type="button" className="secondary" onClick={() => onTicketCountChange(preset)}>
-              {preset}
+            <button key={preset} type="button" className="secondary" onClick={() => addTickets(preset)}>
+              +{preset.toLocaleString()}
             </button>
           ))}
         </div>
