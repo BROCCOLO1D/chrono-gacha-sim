@@ -1,0 +1,168 @@
+# Chrono Gacha Sim
+
+Chrono Gacha Sim is a small web app for simulating ChronoStory gachapon pulls. Players should be able to pick a gachapon location, choose a ticket count like **"roll 50 tickets"**, and see a plausible simulated haul based on public ChronoStory gacha-rate data.
+
+The app is for player planning/entertainment only. It does not interact with MapleStory Worlds, the ChronoStory client, accounts, sessions, or game traffic.
+
+## Goal
+
+Build a clean ChronoStory gacha simulator that answers:
+
+- What might I get if I roll 10 / 50 / 100 tickets at a specific location?
+- Which rare or valuable items appeared in this simulated run?
+- What are the expected rates/value assumptions behind the output?
+- How do different gacha locations compare?
+
+## Data sources
+
+Primary public/community resources:
+
+- [ChronoDEX](https://chronostorydex.com/) — public ChronoStory reference site with gachapon pages, item/search data, rankings, and links to official/public resources.
+- ChronoDEX-linked **Official Gachapon Table Google Sheet** — primary target for rates/location tables.
+- ChronoDEX-linked official/public drop table, map data, and supporting docs where useful for item metadata.
+
+Data ingestion rules:
+
+- Use only public data that is accessible without private credentials.
+- Store source URL and fetch timestamp for every imported dataset.
+- Keep normalized data checked or cached in a transparent format when legally/reasonably allowed.
+- Clearly label if a result is simulated from public rates vs. manually-entered/demo data.
+- Do not scrape private Discord content or any authenticated ChronoStory/Nexon APIs.
+
+## Planned tech stack
+
+Default stack: **React + TypeScript + Vite**.
+
+Rationale: this should be a simple, static-friendly web app with fast iteration and no backend requirement for v0.
+
+Planned libraries/tools:
+
+- React + TypeScript for UI.
+- Vite for dev/build.
+- CSS modules or lightweight Tailwind setup for styling.
+- Vitest for simulator/math tests.
+- Playwright or simple component tests later for core flows.
+- Local JSON data generated from public sheets/site resources.
+- Optional GitHub Actions for lint/typecheck/test/build.
+
+Possible later upgrade:
+
+- Next.js only if server-side fetching, scheduled regeneration, metadata routes, or deployment ergonomics justify it. Start with Vite unless there is a concrete need for Next.
+
+## Core domain model
+
+```ts
+type GachaLocation = {
+  id: string;
+  name: string;
+  sourceUrl: string;
+};
+
+type GachaItem = {
+  id: string;
+  name: string;
+  category?: string;
+  rarity?: string;
+  iconUrl?: string;
+  chronodexUrl?: string;
+};
+
+type GachaRate = {
+  locationId: string;
+  itemId: string;
+  weight?: number;
+  probability?: number;
+  notes?: string;
+  sourceUrl: string;
+  fetchedAt: string;
+};
+
+type SimulatedPull = {
+  itemId: string;
+  rollIndex: number;
+  probability?: number;
+};
+```
+
+## Planned features
+
+### v0.1 — minimal useful simulator
+
+- Static React app shell.
+- Gacha location selector.
+- Ticket-count input with presets: 1, 10, 35, 50, 100.
+- Deterministic simulation engine accepting weighted/probability tables.
+- Result summary:
+  - item counts
+  - rare hits
+  - duplicate counts
+  - estimated rate per result where known
+- Demo/sample data fixture so the app works before live data ingestion is complete.
+- Unit tests for weighted-roll correctness and deterministic seeded runs.
+
+### v0.2 — real ChronoStory data
+
+- Fetch/import script for public ChronoDEX/official gachapon resources.
+- Normalize locations, items, and rates into JSON.
+- Source metadata and fetch timestamp shown in UI.
+- Search/filter results by item name/category/rarity.
+- Link result items back to ChronoDEX when possible.
+
+### v0.3 — player-facing polish
+
+- Location comparison mode.
+- "Roll until item" estimator.
+- Expected number of tickets for selected target item.
+- Shareable result seed/URL.
+- Export simulated haul as image/text.
+- Better rarity animations without pretending to be the actual game UI.
+
+### Frontend assets
+
+Find real public/frontend-safe assets to use where possible: ChronoStory/MapleStory-style item icons, location names, and other visual references from ChronoDEX or official/public resources, but only use assets whose source and usage are acceptable. Record asset source URLs and keep a fallback text-only UI if real assets are unavailable or questionable.
+
+## UX sketch
+
+Primary screen:
+
+1. Select gacha location.
+2. Enter ticket count or click preset.
+3. Click **Roll**.
+4. Show animated-but-fast result reveal.
+5. Show sortable summary table/cards.
+6. Show source/rate metadata below results.
+
+Secondary panels:
+
+- Data freshness/source panel.
+- Target item probability helper.
+- Location comparison.
+- About / disclaimer.
+
+## Simulation notes
+
+- If source data gives explicit probabilities, sample directly from cumulative probabilities.
+- If source data gives weights, normalize weights per location.
+- If data is incomplete, fail loudly in the UI instead of silently inventing rates.
+- Support seeded randomness so shared simulations can be reproduced.
+- Tests should cover:
+  - total probability/weight validation
+  - impossible/empty tables
+  - deterministic seeded runs
+  - large-run convergence sanity checks
+
+## Safety / boundaries
+
+This is a public-data web simulator. It should not:
+
+- automate gameplay
+- connect to a Nexon/MapleStory Worlds account
+- inspect local game state
+- use private/session APIs
+- imply guaranteed gacha outcomes
+
+All outputs are simulated estimates based on public/community data.
+
+## Development status
+
+Bootstrap/planning stage. No app implementation yet.
