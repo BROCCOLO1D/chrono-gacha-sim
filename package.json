@@ -9,7 +9,8 @@
     "preview": "vite preview",
     "test": "vitest run",
     "typecheck": "tsc -b",
-    "data:gacha": "node scripts/generate-gacha-data.mjs"
+    "data:gacha": "node scripts/generate-gacha-data.mjs",
+    "data:scroll": "node scripts/generate-scroll-data.mjs"
   },
   "dependencies": {
     "@vitejs/plugin-react": "latest",

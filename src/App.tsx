@@ -3,6 +3,7 @@ import { chronoGachaDataset } from './data/chronoGacha';
 import { LocationPicker } from './components/LocationPicker';
 import { ResultsSummary } from './components/ResultsSummary';
 import { RollControls } from './components/RollControls';
+import { ScrollSimPanel } from './components/ScrollSimPanel';
 import { TargetOddsPanel } from './components/TargetOddsPanel';
 import { getLocationStats, simulateRolls, summarizePulls } from './lib/sim';
 import './styles.css';
@@ -12,7 +13,7 @@ const defaultLocationId = dataset.locations[0]?.id ?? '';
 const minTicketCount = 1;
 const maxTicketCount = 100_000;
 
-type AppTab = 'simulator' | 'target-odds';
+type AppTab = 'simulator' | 'target-odds' | 'scroll-sim';
 
 function clampTicketCount(value: number): number {
   if (!Number.isFinite(value)) return minTicketCount;
@@ -106,6 +107,14 @@ export function App() {
         >
           Target Odds
         </button>
+        <button
+          type="button"
+          className={activeTab === 'scroll-sim' ? 'app-tab active' : 'app-tab'}
+          aria-pressed={activeTab === 'scroll-sim'}
+          onClick={() => setActiveTab('scroll-sim')}
+        >
+          Scroll Sim
+        </button>
       </nav>
 
       {activeTab === 'simulator' ? (
@@ -114,11 +123,13 @@ export function App() {
           {error ? <p className="error" role="alert">{error}</p> : null}
           <ResultsSummary rows={resultRows} ticketCount={lastRoll.ticketCount} locationName={rolledLocation?.name ?? lastRoll.locationId} />
         </section>
-      ) : (
+      ) : activeTab === 'target-odds' ? (
         <section className="tab-panel" aria-label="Target item odds">
           {renderSetupControls(false)}
           <TargetOddsPanel dataset={dataset} locationId={locationId} ticketCount={ticketCount} />
         </section>
+      ) : (
+        <ScrollSimPanel />
       )}
     </main>
   );

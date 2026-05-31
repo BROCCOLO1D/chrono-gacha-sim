@@ -1,8 +1,13 @@
 import { useEffect, useMemo, useState } from 'react';
-import type { GachaItem } from '../lib/sim/types';
+type IconItem = {
+  id: string;
+  name: string;
+  iconUrl?: string;
+  mapleItemId?: number;
+};
 
 type ItemIconProps = {
-  item: GachaItem;
+  item: IconItem;
   count?: number;
   size?: 'sm' | 'md' | 'lg';
 };
