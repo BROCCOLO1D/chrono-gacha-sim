@@ -3,11 +3,19 @@ import { chronoGachaDataset } from './data/chronoGacha';
 import { LocationPicker } from './components/LocationPicker';
 import { ResultsSummary } from './components/ResultsSummary';
 import { RollControls } from './components/RollControls';
+import { TargetOddsPanel } from './components/TargetOddsPanel';
 import { getLocationStats, simulateRolls, summarizePulls } from './lib/sim';
 import './styles.css';
 
 const dataset = chronoGachaDataset;
 const defaultLocationId = dataset.locations[0]?.id ?? '';
+const minTicketCount = 1;
+const maxTicketCount = 100_000;
+
+function clampTicketCount(value: number): number {
+  if (!Number.isFinite(value)) return minTicketCount;
+  return Math.min(maxTicketCount, Math.max(minTicketCount, Math.trunc(value)));
+}
 
 function makeRollSeed(): string {
   const cryptoApi = globalThis.crypto;
@@ -69,8 +77,10 @@ export function App() {
           </div>
         </section>
 
-        <RollControls ticketCount={ticketCount} onTicketCountChange={setTicketCount} onRoll={handleRoll} />
+        <RollControls ticketCount={ticketCount} onTicketCountChange={(value) => setTicketCount(clampTicketCount(value))} onRoll={handleRoll} />
       </div>
+
+      <TargetOddsPanel dataset={dataset} locationId={locationId} ticketCount={ticketCount} />
 
       {error ? <p className="error" role="alert">{error}</p> : null}
 

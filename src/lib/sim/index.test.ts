@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { chronoGachaDataset } from '../../data/chronoGacha';
-import { normalizeRates, simulateRolls, summarizePulls } from './index';
+import { calculateAtLeastOneChance, normalizeRates, simulateRolls, summarizePulls } from './index';
 import type { GachaDataset } from './types';
 
 const expectedTownCounts = new Map([
@@ -55,6 +55,15 @@ describe('gacha simulator', () => {
     expect(summary.every((row) => row.probability > 0 && row.sourceUrl.startsWith('https://'))).toBe(true);
     expect(summary.every((row) => row.oneIn && row.oneIn > 0)).toBe(true);
     expect(summary.every((row) => row.expectedCount > 0)).toBe(true);
+  });
+
+  it('calculates target-item odds for at least one hit across a ticket stack', () => {
+    const lith = normalizeRates(chronoGachaDataset.rates, 'lith-harbor');
+    const goldEmerald = lith.find((rate) => rate.itemId === '1032026');
+
+    expect(goldEmerald?.probability).toBeCloseTo(12500 / 17468561, 12);
+    expect(calculateAtLeastOneChance(goldEmerald?.probability ?? 0, 100)).toBeCloseTo(0.069080749, 9);
+    expect(calculateAtLeastOneChance(0.5, 2)).toBe(0.75);
   });
 
   it('fails loudly for incomplete/invalid probability tables', () => {

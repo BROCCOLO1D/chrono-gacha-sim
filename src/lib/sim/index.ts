@@ -87,6 +87,13 @@ export function normalizeRates(rates: GachaRate[], locationId: string): Normaliz
   });
 }
 
+export function calculateAtLeastOneChance(probability: number, rolls: number): number {
+  assertPositiveFinite(probability, 'Probability');
+  if (probability > 1) throw new Error('Probability must be no greater than 1.');
+  if (!Number.isInteger(rolls) || rolls < 1) throw new Error('Roll count must be a positive integer.');
+  return 1 - (1 - probability) ** rolls;
+}
+
 export function rollOne(normalizedRates: NormalizedRate[], random: () => number): NormalizedRate {
   if (normalizedRates.length === 0) {
     throw new Error('Cannot roll against an empty rate table.');
