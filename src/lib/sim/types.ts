@@ -1,11 +1,15 @@
 export type Rarity = 'common' | 'uncommon' | 'rare' | 'epic' | 'legendary';
 
+type Category = 'Equip' | 'Use' | 'Etc' | 'Scroll';
+
 export type GachaItem = {
   id: string;
   name: string;
-  category?: string;
+  category?: Category;
   rarity?: Rarity;
   iconUrl?: string;
+  assetSourceUrl?: string;
+  mapleItemId?: number;
   chronodexUrl?: string;
 };
 

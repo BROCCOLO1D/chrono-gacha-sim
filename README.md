@@ -119,7 +119,9 @@ type SimulatedPull = {
 
 ### Frontend assets
 
-Find real public/frontend-safe assets to use where possible: ChronoStory/MapleStory-style item icons, location names, and other visual references from ChronoDEX or official/public resources, but only use assets whose source and usage are acceptable. Record asset source URLs and keep a fallback text-only UI if real assets are unavailable or questionable.
+Use Maple-style item/inventory/result UI, not generic SaaS cards. Current demo item icons are served from public MapleStory.IO GMS v83 item icon endpoints, e.g. `https://maplestory.io/api/GMS/83/item/<itemId>/icon`, so the simulator can render recognizable Maple item sprites while real ChronoStory data import is pending. Record each asset source/item id when importing real data.
+
+Only use assets from official/publicly accessible sources where usage is acceptable. Keep text/fallback UI for missing/questionable assets, and do not bundle scraped private/authenticated assets.
 
 ## UX sketch
 

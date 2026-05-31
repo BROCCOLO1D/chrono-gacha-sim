@@ -38,24 +38,36 @@ export function App() {
 
   return (
     <main className="app-shell">
-      <header className="hero">
-        <p className="eyebrow">ChronoStory public-data simulator</p>
-        <h1>Chrono Gacha Sim</h1>
-        <p>
-          Pick a gachapon location, choose a ticket count, and generate a deterministic simulated haul.
-          Current data is a clearly-marked demo fixture while real public table import work is pending.
-        </p>
+      <header className="maple-window hero">
+        <div className="maple-titlebar">
+          <span>Chrono Gachapon</span>
+          <span className="maple-titlebar__buttons" aria-hidden="true">● ● ●</span>
+        </div>
+        <div className="hero__body">
+          <p className="eyebrow">ChronoStory public-data simulator</p>
+          <h1>Chrono Gacha Sim</h1>
+          <p>
+            Maple-style inventory/results UI with item icons served from public MapleStory.IO asset endpoints.
+            Rates are still demo-only until the ChronoDEX/official public sheet importer lands.
+          </p>
+        </div>
       </header>
 
       <div className="grid">
-        <section className="panel setup" aria-labelledby="setup-heading">
-          <h2 id="setup-heading">Setup</h2>
-          <LocationPicker locations={demoGachaDataset.locations} selectedLocationId={locationId} onChange={setLocationId} />
-          {selectedLocation ? <p className="muted">Source: <a href={selectedLocation.sourceUrl}>{selectedLocation.sourceUrl}</a></p> : null}
-          <div className="source-card">
-            <strong>{demoGachaDataset.metadata.label}</strong>
-            <span>Fetched/recorded: {new Date(demoGachaDataset.metadata.fetchedAt).toLocaleString()}</span>
-            <a href={demoGachaDataset.metadata.sourceUrl}>ChronoDEX reference</a>
+        <section className="maple-window setup" aria-labelledby="setup-heading">
+          <div className="maple-titlebar">
+            <span id="setup-heading">Gachapon Machine</span>
+            <span className="maple-titlebar__buttons" aria-hidden="true">● ● ●</span>
+          </div>
+          <div className="window-body">
+            <LocationPicker locations={demoGachaDataset.locations} selectedLocationId={locationId} onChange={setLocationId} />
+            {selectedLocation ? <p className="muted">Rate source: <a href={selectedLocation.sourceUrl}>{selectedLocation.sourceUrl}</a></p> : null}
+            <div className="source-card">
+              <strong>{demoGachaDataset.metadata.label}</strong>
+              <span>Fetched/recorded: {new Date(demoGachaDataset.metadata.fetchedAt).toLocaleString()}</span>
+              <a href={demoGachaDataset.metadata.sourceUrl}>ChronoDEX reference</a>
+              <span>Item icon source: public MapleStory.IO GMS v83 item icon API.</span>
+            </div>
           </div>
         </section>
 
