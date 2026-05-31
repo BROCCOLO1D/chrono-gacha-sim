@@ -163,6 +163,14 @@ This is a public-data web simulator. It should not:
 
 All outputs are simulated estimates based on public/community data.
 
+## Live deploy
+
+Public GitHub Pages deployment target:
+
+- https://broccolo1d.github.io/chrono-gacha-sim/
+
+Every push to `main` runs typecheck, tests, and a production Vite build before deploying the `dist` artifact with GitHub Actions. The app is configured as a GitHub Pages project site with Vite `base: '/chrono-gacha-sim/'`.
+
 ## Development
 
 ```bash
