@@ -9,25 +9,16 @@ import './styles.css';
 const dataset = chronoGachaDataset;
 const defaultLocationId = dataset.locations[0]?.id ?? '';
 
-function makeDefaultSeed(): string {
-  return new Date().toISOString().slice(0, 10);
-}
-
-function formatFetchedAt(value: string): string {
-  return new Intl.DateTimeFormat(undefined, {
-    year: 'numeric',
-    month: 'short',
-    day: '2-digit',
-    hour: '2-digit',
-    minute: '2-digit',
-  }).format(new Date(value));
+function makeRollSeed(): string {
+  const cryptoApi = globalThis.crypto;
+  if (cryptoApi?.randomUUID) return cryptoApi.randomUUID();
+  return `${Date.now()}-${Math.random().toString(36).slice(2)}`;
 }
 
 export function App() {
   const [locationId, setLocationId] = useState(defaultLocationId);
   const [ticketCount, setTicketCount] = useState(50);
-  const [seed, setSeed] = useState(makeDefaultSeed);
-  const [lastRoll, setLastRoll] = useState(() => ({ locationId: defaultLocationId, ticketCount: 50, seed: makeDefaultSeed() }));
+  const [lastRoll, setLastRoll] = useState(() => ({ locationId: defaultLocationId, ticketCount: 50, seed: makeRollSeed() }));
   const [error, setError] = useState<string | null>(null);
 
   const selectedLocation = dataset.locations.find((location) => location.id === locationId);
@@ -46,23 +37,18 @@ export function App() {
 
   function handleRoll() {
     setError(null);
-    setLastRoll({ locationId, ticketCount, seed: seed.trim() || makeDefaultSeed() });
+    setLastRoll({ locationId, ticketCount, seed: makeRollSeed() });
   }
 
   return (
     <main className="app-shell">
-      <header className="maple-window hero">
+      <header className="maple-window hero hero--compact">
         <div className="maple-titlebar">
           <span>Chrono Gachapon</span>
           <span className="maple-titlebar__buttons" aria-hidden="true">● ● ●</span>
         </div>
         <div className="hero__body">
-          <p className="eyebrow">ChronoStory official-sheet simulator</p>
           <h1>Chrono Gacha Sim</h1>
-          <p>
-            Simulates rolls against the public ChronoStory Official Gachapon Table linked by ChronoDEX.
-            Includes all seven published gachapon towns and {dataset.rates.length.toLocaleString()} weighted item rows.
-          </p>
         </div>
       </header>
 
@@ -75,29 +61,15 @@ export function App() {
           <div className="window-body">
             <LocationPicker locations={dataset.locations} selectedLocationId={locationId} onChange={setLocationId} />
             {selectedLocation && selectedStats ? (
-              <div className="town-card">
+              <div className="town-card town-card--minimal">
                 <strong>{selectedLocation.name}</strong>
-                <span>{selectedStats.itemCount.toLocaleString()} official-sheet item rows</span>
-                <span>Total weight: {selectedLocation.totalWeight?.toLocaleString() ?? '—'}</span>
-                <a href={selectedLocation.sourceUrl}>Open source sheet tab</a>
+                <span>{selectedStats.itemCount.toLocaleString()} items</span>
               </div>
             ) : null}
-            <div className="source-card">
-              <strong>{dataset.metadata.label}</strong>
-              <span>Imported: {formatFetchedAt(dataset.metadata.fetchedAt)}</span>
-              <a href={dataset.metadata.sourceUrl}>ChronoDEX official gachapon sheet</a>
-              <span>Icons: public MapleStory.IO GMS v83 item icon API using imported item IDs.</span>
-            </div>
           </div>
         </section>
 
-        <RollControls
-          ticketCount={ticketCount}
-          seed={seed}
-          onTicketCountChange={setTicketCount}
-          onSeedChange={setSeed}
-          onRoll={handleRoll}
-        />
+        <RollControls ticketCount={ticketCount} onTicketCountChange={setTicketCount} onRoll={handleRoll} />
       </div>
 
       {error ? <p className="error" role="alert">{error}</p> : null}

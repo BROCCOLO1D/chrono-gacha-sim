@@ -2,20 +2,18 @@ const ticketPresets = [1, 10, 35, 50, 100];
 
 type RollControlsProps = {
   ticketCount: number;
-  seed: string;
   onTicketCountChange: (ticketCount: number) => void;
-  onSeedChange: (seed: string) => void;
   onRoll: () => void;
 };
 
-export function RollControls({ ticketCount, seed, onTicketCountChange, onSeedChange, onRoll }: RollControlsProps) {
+export function RollControls({ ticketCount, onTicketCountChange, onRoll }: RollControlsProps) {
   return (
     <section className="maple-window controls" aria-labelledby="roll-controls-heading">
       <div className="maple-titlebar">
-        <span id="roll-controls-heading">Cash Shop Tickets</span>
+        <span id="roll-controls-heading">Tickets</span>
         <span className="maple-titlebar__buttons" aria-hidden="true">● ● ●</span>
       </div>
-      <div className="window-body">
+      <div className="window-body compact-controls">
         <label className="field">
           <span>Ticket count</span>
           <input
@@ -33,12 +31,8 @@ export function RollControls({ ticketCount, seed, onTicketCountChange, onSeedCha
             </button>
           ))}
         </div>
-        <label className="field">
-          <span>Seed</span>
-          <input value={seed} onChange={(event) => onSeedChange(event.target.value)} placeholder="reproducible seed" />
-        </label>
         <button type="button" className="primary" onClick={onRoll}>
-          Roll {ticketCount.toLocaleString()} ticket{ticketCount === 1 ? '' : 's'}
+          Roll {ticketCount.toLocaleString()}
         </button>
       </div>
     </section>

@@ -36,10 +36,10 @@ function formatOneIn(value?: number): string {
 }
 
 export function ResultsSummary({ rows, ticketCount, locationName }: ResultsSummaryProps) {
-  const rareHits = rows.filter((row) => (rarityRank.get(row.rarity ?? 'common') ?? 0) >= 3).sort(sortByRarityThenCount);
   const sortedRows = [...rows].sort(sortByRarityThenCount);
-  const totalStacks = rows.length;
-  const rareHitCount = rareHits.reduce((sum, row) => sum + row.count, 0);
+  const rareHitCount = rows
+    .filter((row) => (rarityRank.get(row.rarity ?? 'common') ?? 0) >= 3)
+    .reduce((sum, row) => sum + row.count, 0);
 
   return (
     <section className="maple-window results" aria-labelledby="results-heading">
@@ -54,8 +54,8 @@ export function ResultsSummary({ rows, ticketCount, locationName }: ResultsSumma
           <strong>{ticketCount.toLocaleString()}</strong>
         </div>
         <div>
-          <span className="ledger-label">Unique stacks</span>
-          <strong>{totalStacks}</strong>
+          <span className="ledger-label">Stacks</span>
+          <strong>{rows.length}</strong>
         </div>
         <div>
           <span className="ledger-label">Rare+</span>
@@ -63,60 +63,52 @@ export function ResultsSummary({ rows, ticketCount, locationName }: ResultsSumma
         </div>
       </div>
 
-      <p className="sim-note">
-        These are simulated random outcomes. “Source rate” and “1/x” come from the imported public official sheet weights;
-        “observed” is just this run’s sampled result.
-      </p>
-
       <div className="inventory-frame" aria-label="Maple-style result inventory">
         {sortedRows.map((row) => (
-          <article key={row.item.id} className={`inventory-card ${row.rarity ?? 'common'}`}>
+          <article key={row.item.id} className={`inventory-card inventory-card--clean ${row.rarity ?? 'common'}`}>
             <ItemIcon item={row.item} count={row.count} size="lg" />
             <div className="inventory-card__body">
-              <h3>{row.item.chronodexUrl ? <a href={row.item.chronodexUrl}>{row.item.name}</a> : row.item.name}</h3>
+              <h3>{row.item.name}</h3>
               <div className="inventory-card__meta">
                 <span className={`rarity ${row.rarity ?? 'common'}`}>{row.rarity ?? 'unknown'}</span>
                 <span>{row.category ?? '—'}</span>
-                {row.item.mapleItemId ? <span>ID {row.item.mapleItemId}</span> : null}
-              </div>
-              <div className="inventory-card__rates">
-                <span>Observed {formatPercent(row.count / ticketCount)}</span>
-                <a href={row.sourceUrl}>Source {row.sourcePercent ?? formatPercent(row.probability)}</a>
-                <span>{formatOneIn(row.oneIn)}</span>
-                <span>Expected {row.expectedCount.toFixed(row.expectedCount < 1 ? 3 : 1)}</span>
               </div>
             </div>
           </article>
         ))}
       </div>
 
-      <details className="drop-table">
-        <summary>Compact run table</summary>
-        <table>
-          <thead>
-            <tr>
-              <th>Item</th>
-              <th>Item ID</th>
-              <th>Count</th>
-              <th>Observed</th>
-              <th>Source rate</th>
-              <th>1/x</th>
-            </tr>
-          </thead>
-          <tbody>
-            {sortedRows.map((row) => (
-              <tr key={row.item.id}>
-                <td>{row.item.name}</td>
-                <td>{row.item.mapleItemId ?? row.item.id}</td>
-                <td>{row.count}</td>
-                <td>{formatPercent(row.count / ticketCount)}</td>
-                <td>{row.sourcePercent ?? formatPercent(row.probability)}</td>
-                <td>{formatOneIn(row.oneIn)}</td>
+      <section className="analytics-table" aria-labelledby="analytics-heading">
+        <h2 id="analytics-heading">Run details</h2>
+        <div className="table-scroll">
+          <table>
+            <thead>
+              <tr>
+                <th>Item</th>
+                <th>ID</th>
+                <th>Count</th>
+                <th>Observed</th>
+                <th>Source rate</th>
+                <th>1/x</th>
+                <th>Expected</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
-      </details>
+            </thead>
+            <tbody>
+              {sortedRows.map((row) => (
+                <tr key={row.item.id}>
+                  <td>{row.item.name}</td>
+                  <td>{row.item.mapleItemId ?? row.item.id}</td>
+                  <td>{row.count}</td>
+                  <td>{formatPercent(row.count / ticketCount)}</td>
+                  <td><a href={row.sourceUrl}>{row.sourcePercent ?? formatPercent(row.probability)}</a></td>
+                  <td>{formatOneIn(row.oneIn)}</td>
+                  <td>{row.expectedCount.toFixed(row.expectedCount < 1 ? 3 : 1)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </section>
     </section>
   );
 }
