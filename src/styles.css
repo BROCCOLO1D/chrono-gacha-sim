@@ -138,6 +138,32 @@ input, select {
   text-transform: uppercase;
 }
 
+
+.app-tabs {
+  display: flex;
+  gap: 0.6rem;
+  margin: 0 0 1rem;
+}
+
+.app-tab {
+  background: linear-gradient(#fff7d0, #f4d07b);
+  border: 2px solid #7d5428;
+  box-shadow: inset 0 1px 0 #fff, 0 3px 0 #6a3a13;
+  color: #5a3511;
+  min-width: 9rem;
+}
+
+.app-tab.active {
+  background: linear-gradient(#ffe88a, #ffbd4f);
+  color: #482400;
+  outline: 3px solid rgb(255 231 115 / 70%);
+}
+
+.tab-panel {
+  display: grid;
+  gap: 1rem;
+}
+
 .grid {
   display: grid;
   gap: 1rem;

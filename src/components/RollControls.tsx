@@ -4,7 +4,7 @@ const maxTicketCount = 100000;
 type RollControlsProps = {
   ticketCount: number;
   onTicketCountChange: (ticketCount: number) => void;
-  onRoll: () => void;
+  onRoll?: () => void;
 };
 
 export function RollControls({ ticketCount, onTicketCountChange, onRoll }: RollControlsProps) {
@@ -36,9 +36,11 @@ export function RollControls({ ticketCount, onTicketCountChange, onRoll }: RollC
             </button>
           ))}
         </div>
-        <button type="button" className="primary" onClick={onRoll}>
-          Roll {ticketCount.toLocaleString()}
-        </button>
+        {onRoll ? (
+          <button type="button" className="primary" onClick={onRoll}>
+            Roll {ticketCount.toLocaleString()}
+          </button>
+        ) : null}
       </div>
     </section>
   );

@@ -12,6 +12,8 @@ const defaultLocationId = dataset.locations[0]?.id ?? '';
 const minTicketCount = 1;
 const maxTicketCount = 100_000;
 
+type AppTab = 'simulator' | 'target-odds';
+
 function clampTicketCount(value: number): number {
   if (!Number.isFinite(value)) return minTicketCount;
   return Math.min(maxTicketCount, Math.max(minTicketCount, Math.trunc(value)));
@@ -24,6 +26,7 @@ function makeRollSeed(): string {
 }
 
 export function App() {
+  const [activeTab, setActiveTab] = useState<AppTab>('simulator');
   const [locationId, setLocationId] = useState(defaultLocationId);
   const [ticketCount, setTicketCount] = useState(50);
   const [lastRoll, setLastRoll] = useState(() => ({ locationId: defaultLocationId, ticketCount: 50, seed: makeRollSeed() }));
@@ -48,6 +51,32 @@ export function App() {
     setLastRoll({ locationId, ticketCount, seed: makeRollSeed() });
   }
 
+  const renderSetupControls = (showRollButton: boolean) => (
+    <div className="grid">
+      <section className="maple-window setup" aria-labelledby="setup-heading">
+        <div className="maple-titlebar">
+          <span id="setup-heading">Gachapon Machine</span>
+          <span className="maple-titlebar__buttons" aria-hidden="true">● ● ●</span>
+        </div>
+        <div className="window-body">
+          <LocationPicker locations={dataset.locations} selectedLocationId={locationId} onChange={setLocationId} />
+          {selectedLocation && selectedStats ? (
+            <div className="town-card town-card--minimal">
+              <strong>{selectedLocation.name}</strong>
+              <span>{selectedStats.itemCount.toLocaleString()} items</span>
+            </div>
+          ) : null}
+        </div>
+      </section>
+
+      <RollControls
+        ticketCount={ticketCount}
+        onTicketCountChange={(value) => setTicketCount(clampTicketCount(value))}
+        onRoll={showRollButton ? handleRoll : undefined}
+      />
+    </div>
+  );
+
   return (
     <main className="app-shell">
       <header className="maple-window hero hero--compact">
@@ -60,31 +89,37 @@ export function App() {
         </div>
       </header>
 
-      <div className="grid">
-        <section className="maple-window setup" aria-labelledby="setup-heading">
-          <div className="maple-titlebar">
-            <span id="setup-heading">Gachapon Machine</span>
-            <span className="maple-titlebar__buttons" aria-hidden="true">● ● ●</span>
-          </div>
-          <div className="window-body">
-            <LocationPicker locations={dataset.locations} selectedLocationId={locationId} onChange={setLocationId} />
-            {selectedLocation && selectedStats ? (
-              <div className="town-card town-card--minimal">
-                <strong>{selectedLocation.name}</strong>
-                <span>{selectedStats.itemCount.toLocaleString()} items</span>
-              </div>
-            ) : null}
-          </div>
+      <nav className="app-tabs" aria-label="App sections">
+        <button
+          type="button"
+          className={activeTab === 'simulator' ? 'app-tab active' : 'app-tab'}
+          aria-pressed={activeTab === 'simulator'}
+          onClick={() => setActiveTab('simulator')}
+        >
+          Simulator
+        </button>
+        <button
+          type="button"
+          className={activeTab === 'target-odds' ? 'app-tab active' : 'app-tab'}
+          aria-pressed={activeTab === 'target-odds'}
+          onClick={() => setActiveTab('target-odds')}
+        >
+          Target Odds
+        </button>
+      </nav>
+
+      {activeTab === 'simulator' ? (
+        <section className="tab-panel" aria-label="Simulator">
+          {renderSetupControls(true)}
+          {error ? <p className="error" role="alert">{error}</p> : null}
+          <ResultsSummary rows={resultRows} ticketCount={lastRoll.ticketCount} locationName={rolledLocation?.name ?? lastRoll.locationId} />
         </section>
-
-        <RollControls ticketCount={ticketCount} onTicketCountChange={(value) => setTicketCount(clampTicketCount(value))} onRoll={handleRoll} />
-      </div>
-
-      <TargetOddsPanel dataset={dataset} locationId={locationId} ticketCount={ticketCount} />
-
-      {error ? <p className="error" role="alert">{error}</p> : null}
-
-      <ResultsSummary rows={resultRows} ticketCount={lastRoll.ticketCount} locationName={rolledLocation?.name ?? lastRoll.locationId} />
+      ) : (
+        <section className="tab-panel" aria-label="Target item odds">
+          {renderSetupControls(false)}
+          <TargetOddsPanel dataset={dataset} locationId={locationId} ticketCount={ticketCount} />
+        </section>
+      )}
     </main>
   );
 }
